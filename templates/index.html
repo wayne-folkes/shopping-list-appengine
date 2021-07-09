@@ -14,17 +14,20 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
-    <title>Datastore and Firebase Auth Example</title>
-
-    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your Shopping List</title>
     <link
-      type="text/css"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      href="https://www.gstatic.com/firebasejs/ui/4.4.0/firebase-ui-auth.css"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
     />
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+
     <link
       type="text/css"
       rel="stylesheet"
@@ -33,7 +36,7 @@
   </head>
 
   <body>
-    <h1>Datastore and Firebase Auth Example</h1>
+    <h1>Your Shopping List</h1>
     <!-- <div id="firebaseui-auth-container"></div> -->
     <!-- <button id="sign-out" hidden="true">Sign Out</button>
 
@@ -56,28 +59,66 @@
       <p>Error: {{ error_message }}</p>
       {% endif %}
     </div> -->
+    <div class="container">
+      <form action="/view" method="post" id="add_form">
+        <div class="form-floating">
+          <input
+            type="text"
+            name="new_item"
+            class="form-control"
+            id="new_item"
+            onkeyup="success()"
+            autofocus
+          />
+          <label for="new_item" class="form-label">Add new item</label>
+        </div>
+        <div id="newItemHelp" class="form-text">
+          Add new items to your shopping list.
+        </div>
+        <input
+          type="submit"
+          value="Add"
+          class="btn btn-primary btn-sm"
+          disabled
+          id="new_item_btn"
+          onclick="addItems()"
+        />
+      </form>
+      {% if (times is defined) and times %}
+      <h2 class="sticky-top">Your Items</h2>
+      <form action="/remove" method="post">
+        <div class="mb-3 form-check">
+          <ol class="list-group-flush" id="item_list">
+            <li class="list-group-item">
+              <input class="form-check-input" type="checkbox" id="select-all" />
+              <label class="form-check-label" for="car">Select All</label>
+            </li>
 
-    <h2>Last 10 visits</h2>
-    <form action="/add" method="post">
-      <input type="text" name="new_item" />
-      <label for="new_item">Add new item</label>
-      <input type="submit" value="Add" />
-    </form>
-    <form action="/remove" method="post">
-      {% for time in times %}
-      <input
-        type="checkbox"
-        id="{{ time['id'] }}"
-        value="{{ time['id'] }}"
-        name="key"
-      />
-      <label for="{{ time['timestamp'] }}">{{ time['timestamp'] }}</label><br />
-      {% endfor %}
-      <input type="submit" value="Delete" />
-      <div>
-        <input type="checkbox" id="select-all" />
-        <label for="car">Select All</label>
-      </div>
-    </form>
+            {% for time in times %}
+            <li class="list-group-item">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="{{ time['id'] }}"
+                value="{{ time['id'] }}"
+                name="key"
+              />
+              <label class="form-check-label" for="{{ time['timestamp'] }}">{{ time['timestamp'] }}</label>
+              <input type="image" width="15" height="15" src="static/trash.png" name="key" formtarget="_self" formaction="/remove/{{ time['id'] }}/" value="{{ time['id'] }}">
+            </li>
+            {% endfor %}
+            {% else %}
+            <h2>Your list is empty, lets get started</h2>
+          </ol>
+          {% endif %}
+        </div>
+        <input class="btn btn-secondary btn-sm" type="submit" value="Delete" />
+      </form>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>
